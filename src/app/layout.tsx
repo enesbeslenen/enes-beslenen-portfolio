@@ -13,13 +13,28 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Enes Beslenen — Web Tasarım & Kodlama",
   description:
     "Harran Üniversitesi web tasarım ve kodlama öğrencisi. Yaratıcı ve performanslı web deneyimleri üzerine çalışıyorum.",
   icons: {
-    icon: "/logo.png",
-    apple: "/logo.png",
+    icon: [{ url: "/logo.png", type: "image/png" }],
+    apple: [{ url: "/logo.png", type: "image/png" }],
+  },
+  openGraph: {
+    title: "Enes Beslenen — Web Tasarım & Kodlama",
+    description:
+      "Harran Üniversitesi web tasarım ve kodlama öğrencisi. Yaratıcı ve performanslı web deneyimleri üzerine çalışıyorum.",
+    images: [{ url: "/logo.png", width: 512, height: 512, alt: "Enes Beslenen" }],
+  },
+  twitter: {
+    card: "summary",
+    images: ["/logo.png"],
   },
 };
 
