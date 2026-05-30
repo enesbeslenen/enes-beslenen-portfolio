@@ -49,6 +49,21 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Accessibility + performance: respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 body {
   background-color: var(--color-surface-0);
   color: var(--color-text-primary);

@@ -7,9 +7,12 @@ import { ExternalLink, ArrowRight } from "lucide-react";
 import { GithubIcon } from "@/components/ui/SocialIcons";
 import { useLang } from "@/contexts/LanguageContext";
 import { projectsData, type Project } from "@/data/projects";
+import { useMotionProfile } from "@/hooks/useMotionProfile";
 
 /* ── Animated live link visual (featured, no screenshot) ─ */
 function LiveLinkVisual({ href, className = "" }: { href: string; className?: string }) {
+  const { lite } = useMotionProfile();
+
   return (
     <motion.a
       href={href}
@@ -17,20 +20,29 @@ function LiveLinkVisual({ href, className = "" }: { href: string; className?: st
       rel="noopener noreferrer"
       aria-label="Live demo"
       className={`group/live flex items-center justify-center flex-shrink-0 ${className}`}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
+      whileHover={lite ? undefined : { scale: 1.05 }}
+      whileTap={lite ? undefined : { scale: 0.95 }}
     >
       <div className="relative w-36 h-36">
-        <motion.div
-          className="absolute inset-0 rounded-2xl bg-[#e8621a]/10 border border-[#e8621a]/20 group-hover/live:bg-[#e8621a]/15 transition-colors"
-          animate={{ rotate: 360 }}
-          transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
-        />
-        <motion.div
-          className="absolute inset-4 rounded-xl bg-[#e8621a]/15 border border-[#e8621a]/25 group-hover/live:bg-[#e8621a]/20 transition-colors"
-          animate={{ rotate: -360 }}
-          transition={{ repeat: Infinity, duration: 15, ease: "linear" }}
-        />
+        {lite ? (
+          <>
+            <div className="absolute inset-0 rounded-2xl bg-[#e8621a]/10 border border-[#e8621a]/20" />
+            <div className="absolute inset-4 rounded-xl bg-[#e8621a]/15 border border-[#e8621a]/25" />
+          </>
+        ) : (
+          <>
+            <motion.div
+              className="absolute inset-0 rounded-2xl bg-[#e8621a]/10 border border-[#e8621a]/20 group-hover/live:bg-[#e8621a]/15 transition-colors"
+              animate={{ rotate: 360 }}
+              transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
+            />
+            <motion.div
+              className="absolute inset-4 rounded-xl bg-[#e8621a]/15 border border-[#e8621a]/25 group-hover/live:bg-[#e8621a]/20 transition-colors"
+              animate={{ rotate: -360 }}
+              transition={{ repeat: Infinity, duration: 15, ease: "linear" }}
+            />
+          </>
+        )}
         <div className="absolute inset-8 rounded-lg bg-[#e8621a]/20 group-hover/live:bg-[#e8621a]/30 flex items-center justify-center transition-colors">
           <ExternalLink className="text-[#e8621a]" size={20} />
         </div>
@@ -49,6 +61,8 @@ function ProjectPreview({
   className?: string;
   sizes: string;
 }) {
+  const { lite } = useMotionProfile();
+
   if (!project.image) return null;
 
   const image = (
@@ -58,7 +72,8 @@ function ProjectPreview({
         alt={project.title}
         fill
         sizes={sizes}
-        className="object-cover object-top transition-transform duration-500 group-hover/preview:scale-105"
+        loading="lazy"
+        className={`object-cover object-top transition-transform duration-500 ${lite ? "" : "group-hover/preview:scale-105"}`}
       />
       <div className="absolute inset-0 bg-gradient-to-t from-[#141414]/80 via-transparent to-transparent pointer-events-none" />
       {project.live && (
@@ -77,8 +92,8 @@ function ProjectPreview({
         rel="noopener noreferrer"
         aria-label={`${project.title} — live demo`}
         className="group/preview block flex-shrink-0"
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
+        whileHover={lite ? undefined : { scale: 1.02 }}
+        whileTap={lite ? undefined : { scale: 0.98 }}
       >
         {image}
       </motion.a>
@@ -135,6 +150,7 @@ function ProjectCard({
   project: Project;
   index: number;
 }) {
+  const { lite } = useMotionProfile();
   const cardRef = useRef<HTMLDivElement>(null);
   const inView = useInView(cardRef, { once: true, margin: "-80px" });
 
@@ -147,6 +163,7 @@ function ProjectCard({
   const springGlow = useSpring(glowOpacity, { stiffness: 200, damping: 25 });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (lite) return;
     const rect = cardRef.current!.getBoundingClientRect();
     const cx = rect.left + rect.width / 2;
     const cy = rect.top + rect.height / 2;
@@ -161,31 +178,37 @@ function ProjectCard({
     glowOpacity.set(0);
   };
 
+  const tiltStyle = lite
+    ? undefined
+    : { rotateX: springX, rotateY: springY, transformStyle: "preserve-3d" as const };
+
   return (
     <motion.div
       ref={cardRef}
-      initial={{ opacity: 0, y: 50 }}
+      initial={{ opacity: 0, y: lite ? 16 : 50 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{
-        delay: index * 0.08,
-        duration: 0.6,
+        delay: lite ? 0 : index * 0.08,
+        duration: lite ? 0.3 : 0.6,
         ease: [0.215, 0.61, 0.355, 1],
       }}
-      style={{ rotateX: springX, rotateY: springY, transformStyle: "preserve-3d" }}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+      style={tiltStyle}
+      onMouseMove={lite ? undefined : handleMouseMove}
+      onMouseLeave={lite ? undefined : handleMouseLeave}
       className="group relative rounded-2xl bg-[#141414] border border-white/5 p-6 overflow-hidden hover:border-[#e8621a]/20 transition-colors duration-300"
     >
       <div className={`absolute inset-0 bg-gradient-to-br ${project.gradient} pointer-events-none`} />
 
-      <motion.div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(232,98,26,0.06), transparent)",
-          opacity: springGlow,
-        }}
-      />
+      {!lite && (
+        <motion.div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(232,98,26,0.06), transparent)",
+            opacity: springGlow,
+          }}
+        />
+      )}
 
       <div className="relative flex flex-col h-full gap-4">
         <ProjectPreview
@@ -229,15 +252,16 @@ function ProjectCard({
 /* ── Featured project ────────────────────────────────── */
 function FeaturedProject({ project }: { project: Project }) {
   const { t } = useLang();
+  const { lite } = useMotionProfile();
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 60 }}
+      initial={{ opacity: 0, y: lite ? 20 : 60 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.8, ease: [0.215, 0.61, 0.355, 1] }}
+      transition={{ duration: lite ? 0.35 : 0.8, ease: [0.215, 0.61, 0.355, 1] }}
       className="relative rounded-3xl bg-[#141414] border border-white/5 overflow-hidden group hover:border-[#e8621a]/20 transition-colors duration-500"
     >
       <div className={`absolute inset-0 bg-gradient-to-br ${project.gradient} opacity-60`} />
@@ -307,6 +331,7 @@ function FeaturedProject({ project }: { project: Project }) {
 
 export default function Projects() {
   const { t, lang } = useLang();
+  const { lite } = useMotionProfile();
   const sectionRef = useRef<HTMLElement>(null);
   const inView = useInView(sectionRef, { once: true, margin: "-100px" });
 
@@ -318,9 +343,9 @@ export default function Projects() {
     <section id="projects" ref={sectionRef} className="py-24 md:py-32 bg-[#080808]">
       <div className="max-w-6xl mx-auto px-6">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: lite ? 12 : 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: lite ? 0.3 : 0.6 }}
           className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-4"
         >
           <div>
@@ -336,7 +361,7 @@ export default function Projects() {
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 text-sm text-neutral-500 hover:text-[#e8621a] transition-colors duration-200 group"
-            whileHover={{ x: 4 }}
+            whileHover={lite ? undefined : { x: 4 }}
           >
             {t.projects.viewAll}
             <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
