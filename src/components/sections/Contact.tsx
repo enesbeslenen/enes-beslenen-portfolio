@@ -5,6 +5,12 @@ import { motion, useInView, AnimatePresence } from "framer-motion";
 import { Mail, Send, ArrowRight, CheckCircle2 } from "lucide-react";
 import { GithubIcon, LinkedinIcon, InstagramIcon } from "@/components/ui/SocialIcons";
 import { useLang } from "@/contexts/LanguageContext";
+import {
+  FORMSUBMIT_ENDPOINT,
+  type FormSubmitResponse,
+  isFormSubmitActivationError,
+  isFormSubmitSuccess,
+} from "@/lib/contact";
 
 const SOCIALS = [
   {
@@ -45,20 +51,41 @@ export default function Contact() {
   const inView = useInView(sectionRef, { once: true, margin: "-100px" });
 
   const [formState, setFormState] = useState<FormState>("idle");
+  const [errorHint, setErrorHint] = useState<string | null>(null);
   const [fields, setFields] = useState({ name: "", email: "", message: "" });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormState("sending");
+    setErrorHint(null);
 
     try {
-      const response = await fetch("/api/contact", {
+      const response = await fetch(FORMSUBMIT_ENDPOINT, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(fields),
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          name: fields.name.trim(),
+          email: fields.email.trim(),
+          _replyto: fields.email.trim(),
+          message: fields.message.trim(),
+          _subject: "Portfolyo İletişim Formu",
+          _template: "table",
+          _captcha: "false",
+        }),
       });
 
-      if (!response.ok) throw new Error("Send failed");
+      const data = (await response.json()) as FormSubmitResponse;
+
+      if (!isFormSubmitSuccess(data)) {
+        if (isFormSubmitActivationError(data.message)) {
+          setErrorHint(t.contact.sendErrorActivation);
+        }
+        throw new Error(data.message ?? "Send failed");
+      }
+
       setFormState("success");
     } catch {
       setFormState("error");
@@ -186,9 +213,14 @@ export default function Contact() {
                   exit={{ opacity: 0, scale: 0.9 }}
                   className="flex flex-col items-center justify-center py-12 gap-5 text-center"
                 >
-                  <p className="text-neutral-400 text-sm max-w-sm">{t.contact.sendError}</p>
+                  <p className="text-neutral-400 text-sm max-w-sm">
+                    {errorHint ?? t.contact.sendError}
+                  </p>
                   <motion.button
-                    onClick={() => setFormState("idle")}
+                    onClick={() => {
+                      setFormState("idle");
+                      setErrorHint(null);
+                    }}
                     className="text-xs text-neutral-500 hover:text-neutral-300 transition-colors font-mono underline underline-offset-2"
                     whileHover={{ scale: 1.05 }}
                   >

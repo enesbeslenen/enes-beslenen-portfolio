@@ -83,6 +83,8 @@ export const translations = {
       sendButton: "Send Message",
       sending: "Sending…",
       sendError: "Message could not be sent. Please try again or email me directly.",
+      sendErrorActivation:
+        "FormSubmit activation is required. Check enesbeslenen.dev@gmail.com for the activation email from FormSubmit and click the link, then try again.",
     },
     footer: {
       builtWith: "— Built with Next.js & Tailwind",
@@ -170,6 +172,8 @@ export const translations = {
       sendButton: "Mesaj Gönder",
       sending: "Gönderiliyor…",
       sendError: "Mesaj gönderilemedi. Lütfen tekrar deneyin veya doğrudan e-posta gönderin.",
+      sendErrorActivation:
+        "Form henüz aktif değil. enesbeslenen.dev@gmail.com adresine FormSubmit'ten gelen aktivasyon mailindeki linke tıklayın, ardından tekrar deneyin.",
     },
     footer: {
       builtWith: "— Next.js & Tailwind ile yapıldı",

@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
-
-const CONTACT_EMAIL = "enesbeslenen.dev@gmail.com";
+import {
+  FORMSUBMIT_ENDPOINT,
+  type FormSubmitResponse,
+  isFormSubmitActivationError,
+  isFormSubmitSuccess,
+} from "@/lib/contact";
 
 export async function POST(request: Request) {
   try {
@@ -10,15 +14,26 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
-    const response = await fetch(`https://formsubmit.co/ajax/${CONTACT_EMAIL}`, {
+    const origin =
+      request.headers.get("origin") ??
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null);
+
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    };
+    if (origin) {
+      headers.Origin = origin;
+      headers.Referer = `${origin}/`;
+    }
+
+    const response = await fetch(FORMSUBMIT_ENDPOINT, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
+      headers,
       body: JSON.stringify({
         name: name.trim(),
         email: email.trim(),
+        _replyto: email.trim(),
         message: message.trim(),
         _subject: "Portfolyo İletişim Formu",
         _template: "table",
@@ -26,8 +41,17 @@ export async function POST(request: Request) {
       }),
     });
 
-    if (!response.ok) {
-      return NextResponse.json({ error: "Send failed" }, { status: 502 });
+    const data = (await response.json()) as FormSubmitResponse;
+
+    if (!isFormSubmitSuccess(data)) {
+      const needsActivation = isFormSubmitActivationError(data.message);
+      return NextResponse.json(
+        {
+          error: data.message ?? "Send failed",
+          needsActivation,
+        },
+        { status: needsActivation ? 403 : 502 }
+      );
     }
 
     return NextResponse.json({ success: true });
