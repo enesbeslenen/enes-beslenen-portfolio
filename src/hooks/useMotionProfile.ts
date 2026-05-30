@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useEffect, useState } from "react";
 
 export type MotionProfile = {
   /** Mobile or prefers-reduced-motion: skip 3D, infinite loops, heavy entrances */
@@ -9,27 +9,37 @@ export type MotionProfile = {
   reduced: boolean;
 };
 
-function getMotionProfile(): MotionProfile {
+function readMotionProfile(): MotionProfile {
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const mobile = window.matchMedia("(max-width: 767px)").matches;
   return { lite: reduced || mobile, reduced };
 }
 
-function subscribe(onChange: () => void) {
-  const reducedMq = window.matchMedia("(prefers-reduced-motion: reduce)");
-  const mobileMq = window.matchMedia("(max-width: 767px)");
-  reducedMq.addEventListener("change", onChange);
-  mobileMq.addEventListener("change", onChange);
-  return () => {
-    reducedMq.removeEventListener("change", onChange);
-    mobileMq.removeEventListener("change", onChange);
-  };
-}
-
-/** Mobile + prefers-reduced-motion: lighter animations for performance */
+/**
+ * Defaults to lite mode until mounted so SSR + hydration markup match
+ * (avoids desktop hydration crash from mismatched animation trees).
+ */
 export function useMotionProfile(): MotionProfile {
-  return useSyncExternalStore(subscribe, getMotionProfile, () => ({
+  const [profile, setProfile] = useState<MotionProfile>({
     lite: true,
     reduced: false,
-  }));
+  });
+
+  useEffect(() => {
+    const update = () => setProfile(readMotionProfile());
+
+    update();
+
+    const reducedMq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const mobileMq = window.matchMedia("(max-width: 767px)");
+    reducedMq.addEventListener("change", update);
+    mobileMq.addEventListener("change", update);
+
+    return () => {
+      reducedMq.removeEventListener("change", update);
+      mobileMq.removeEventListener("change", update);
+    };
+  }, []);
+
+  return profile;
 }

@@ -13,12 +13,21 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ??
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+function getMetadataBase(): URL {
+  const raw =
+    process.env.NEXT_PUBLIC_SITE_URL?.trim() ||
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+
+  try {
+    const withProtocol = raw.startsWith("http") ? raw : `https://${raw}`;
+    return new URL(withProtocol);
+  } catch {
+    return new URL("https://enesbeslenen.vercel.app");
+  }
+}
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: getMetadataBase(),
   title: "Enes Beslenen — Web Tasarım & Kodlama",
   description:
     "Harran Üniversitesi web tasarım ve kodlama öğrencisi. Yaratıcı ve performanslı web deneyimleri üzerine çalışıyorum.",
