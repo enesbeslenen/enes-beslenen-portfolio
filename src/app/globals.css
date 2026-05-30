@@ -1,0 +1,123 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────
+   Design Tokens — Tailwind v4 @theme block
+   ───────────────────────────────────────── */
+@theme inline {
+  /* Orange accent palette
+     Source: cinematic rim light in portfolio photo (~#E8621A) */
+  --color-accent-50:  #fff4ec;
+  --color-accent-100: #ffe5cc;
+  --color-accent-200: #ffc799;
+  --color-accent-300: #ffa060;
+  --color-accent-400: #ff7830;
+  --color-accent-500: #e8621a; /* ← hero accent */
+  --color-accent-600: #c44d0f;
+  --color-accent-700: #9e3b0b;
+  --color-accent-800: #7a2e0c;
+  --color-accent-900: #5c220b;
+  --color-accent-950: #3d1407;
+
+  /* Dark surface palette */
+  --color-void:       #080808; /* deepest background */
+  --color-surface-0:  #0d0d0d; /* page background */
+  --color-surface-1:  #141414; /* elevated containers */
+  --color-surface-2:  #1c1c1c; /* cards, panels */
+  --color-surface-3:  #252525; /* input fields, modals */
+  --color-border:     #2e2e2e; /* subtle dividers */
+  --color-border-dim: #1e1e1e; /* barely-visible borders */
+
+  /* Typography */
+  --color-text-primary:   #f0f0f0;
+  --color-text-secondary: #a0a0a0;
+  --color-text-muted:     #5a5a5a;
+  --color-text-inverted:  #0d0d0d;
+}
+
+/* ─────────────────────────────────────────
+   Base styles
+   ───────────────────────────────────────── */
+:root {
+  color-scheme: dark;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-surface-0);
+  color: var(--color-text-primary);
+  font-family: var(--font-geist-sans, system-ui, sans-serif);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─────────────────────────────────────────
+   Selection highlight
+   ───────────────────────────────────────── */
+::selection {
+  background-color: var(--color-accent-500);
+  color: var(--color-text-inverted);
+}
+
+/* ─────────────────────────────────────────
+   Scrollbar (Webkit)
+   ───────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #0d0d0d;
+}
+::-webkit-scrollbar-thumb {
+  background: #2e2e2e;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #e8621a;
+}
+
+
+/* ─────────────────────────────────────────
+   Focus visible ring
+   ───────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid #e8621a;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ─────────────────────────────────────────
+   Perspective helper for 3-D card tilts
+   ───────────────────────────────────────── */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+/* ─────────────────────────────────────────
+   Gradient text utility
+   ───────────────────────────────────────── */
+.text-gradient-orange {
+  background: linear-gradient(135deg, #e8621a 0%, #ff9a55 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─────────────────────────────────────────
+   Noise grain overlay helper
+   ───────────────────────────────────────── */
+.noise-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 0;
+}
