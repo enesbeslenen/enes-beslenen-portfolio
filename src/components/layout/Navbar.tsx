@@ -57,12 +57,19 @@ export default function Navbar() {
               e.preventDefault();
               window.scrollTo({ top: 0, behavior: "smooth" });
             }}
-            className="flex items-center gap-1 select-none"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            className="flex items-center gap-2 select-none"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
           >
-            <Image src="/logo.png" alt="Enes Beslenen logo" width={85} height={85} className="object-contain" />
-            <span className="text-xl font-semibold tracking-tight">
+            <Image
+              src="/logo.png"
+              alt="Enes Beslenen logo"
+              width={40}
+              height={40}
+              className="h-9 w-9 shrink-0 object-contain"
+              priority
+            />
+            <span className="text-lg font-semibold tracking-tight leading-none">
               <span className="text-white">enes</span>
               <span className="text-[#e8621a]">.</span>
             </span>
