@@ -266,8 +266,17 @@ function FeaturedProject({ project }: { project: Project }) {
     >
       <div className={`absolute inset-0 bg-gradient-to-br ${project.gradient} opacity-60`} />
 
-      <div className="relative p-8 md:p-10 flex flex-col md:flex-row gap-8 items-start">
-        <div className="flex-1 space-y-5 w-full">
+      <div className="relative p-8 md:p-10 flex flex-col gap-6">
+        {project.image && (
+          <ProjectPreview
+            project={project}
+            className="md:hidden aspect-video w-full rounded-xl border border-white/10"
+            sizes="100vw"
+          />
+        )}
+
+        <div className="flex flex-col md:flex-row gap-8 items-start">
+          <div className="flex-1 space-y-5 w-full">
           <div className="flex items-start justify-between gap-4">
             <div>
               <div className="flex flex-wrap items-center gap-3 mb-3">
@@ -312,11 +321,10 @@ function FeaturedProject({ project }: { project: Project }) {
           )}
         </div>
 
-        {/* Desktop: screenshot or animated live link */}
         {project.image ? (
           <ProjectPreview
             project={project}
-            className="hidden md:block w-52 h-52 rounded-2xl border border-white/10"
+            className="hidden md:block w-52 h-52 rounded-2xl border border-white/10 flex-shrink-0"
             sizes="208px"
           />
         ) : (
@@ -324,6 +332,7 @@ function FeaturedProject({ project }: { project: Project }) {
             <LiveLinkVisual href={project.live} className="hidden md:flex w-52 h-52" />
           )
         )}
+        </div>
       </div>
     </motion.div>
   );
