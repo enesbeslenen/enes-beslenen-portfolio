@@ -6,7 +6,11 @@ import { Mail, Send, ArrowRight, CheckCircle2 } from "lucide-react";
 import { GithubIcon, LinkedinIcon, InstagramIcon } from "@/components/ui/SocialIcons";
 import { useLang } from "@/contexts/LanguageContext";
 import {
-  type ContactApiResponse,
+  WEB3FORMS_ENDPOINT,
+  buildWeb3FormsBody,
+  getWeb3FormsAccessKey,
+  isWeb3FormsSuccess,
+  type Web3FormsResponse,
 } from "@/lib/contact";
 
 const SOCIALS = [
@@ -57,23 +61,34 @@ export default function Contact() {
     setErrorHint(null);
 
     try {
-      const response = await fetch("/api/contact", {
+      const response = await fetch(WEB3FORMS_ENDPOINT, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: fields.name.trim(),
-          email: fields.email.trim(),
-          message: fields.message.trim(),
-        }),
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(
+          buildWeb3FormsBody(
+            {
+              name: fields.name,
+              email: fields.email,
+              message: fields.message,
+            },
+            getWeb3FormsAccessKey()
+          )
+        ),
       });
 
-      const data = (await response.json()) as ContactApiResponse;
+      let data: Web3FormsResponse = {};
+      try {
+        data = (await response.json()) as Web3FormsResponse;
+      } catch {
+        /* non-JSON response */
+      }
 
-      if (!response.ok || !data.success) {
-        if (response.status === 503) {
-          setErrorHint(t.contact.sendErrorConfig);
-        }
-        throw new Error(data.error ?? "Send failed");
+      if (!response.ok || !isWeb3FormsSuccess(data)) {
+        setErrorHint(data.message ?? t.contact.sendError);
+        throw new Error(data.message ?? "Send failed");
       }
 
       setFormState("success");

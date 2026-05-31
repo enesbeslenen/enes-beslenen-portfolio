@@ -84,7 +84,7 @@ export const translations = {
       sending: "Sending…",
       sendError: "Message could not be sent. Please try again or email me directly.",
       sendErrorConfig:
-        "The mail service is temporarily unavailable. Please email enesbeslenen.dev@gmail.com directly.",
+        "Form access key is missing. Set NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY in Vercel and redeploy.",
     },
     footer: {
       builtWith: "— Built with Next.js & Tailwind",
@@ -173,7 +173,7 @@ export const translations = {
       sending: "Gönderiliyor…",
       sendError: "Mesaj gönderilemedi. Lütfen tekrar deneyin veya doğrudan e-posta gönderin.",
       sendErrorConfig:
-        "Mail servisi şu an yapılandırılmamış. Lütfen doğrudan enesbeslenen.dev@gmail.com adresine yazın.",
+        "Form mail anahtarı eksik. Vercel'de NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY tanımlayıp redeploy edin.",
     },
     footer: {
       builtWith: "— Next.js & Tailwind ile yapıldı",
