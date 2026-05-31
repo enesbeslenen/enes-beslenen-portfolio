@@ -65,8 +65,10 @@ function ProjectPreview({
 
   if (!project.image) return null;
 
-  const image = (
-    <div className={`relative overflow-hidden bg-[#1c1c1c] ${className}`}>
+  const containerClass = `relative overflow-hidden bg-[#1c1c1c] ${className}`;
+
+  const imageContent = (
+    <>
       <Image
         src={project.image}
         alt={project.title}
@@ -81,7 +83,7 @@ function ProjectPreview({
           <ExternalLink size={16} className="text-[#e8621a]" />
         </div>
       )}
-    </div>
+    </>
   );
 
   if (project.live) {
@@ -91,16 +93,16 @@ function ProjectPreview({
         target="_blank"
         rel="noopener noreferrer"
         aria-label={`${project.title} — live demo`}
-        className="group/preview block flex-shrink-0"
+        className={`group/preview block flex-shrink-0 ${containerClass}`}
         whileHover={lite ? undefined : { scale: 1.02 }}
         whileTap={lite ? undefined : { scale: 0.98 }}
       >
-        {image}
+        {imageContent}
       </motion.a>
     );
   }
 
-  return <div className="flex-shrink-0">{image}</div>;
+  return <div className={`flex-shrink-0 ${containerClass}`}>{imageContent}</div>;
 }
 
 /* ── Project action buttons ──────────────────────────── */
@@ -275,63 +277,62 @@ function FeaturedProject({ project }: { project: Project }) {
           />
         )}
 
-        <div className="flex flex-col md:flex-row gap-8 items-start">
-          <div className="flex-1 space-y-5 w-full">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <div className="flex flex-wrap items-center gap-3 mb-3">
-                <span className="px-2.5 py-1 text-[10px] font-mono rounded-full bg-[#e8621a]/15 text-[#e8621a] border border-[#e8621a]/20 uppercase tracking-wider">
-                  {t.projects.featuredLabel}
-                </span>
-                <span className="text-xs text-neutral-600 font-mono">{project.year}</span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/5 text-neutral-500 border border-white/5">
-                  {project.category}
-                </span>
+        <div className="flex flex-col md:flex-row md:items-stretch gap-8">
+          <div className="flex-1 min-w-0 space-y-5">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <div className="flex flex-wrap items-center gap-3 mb-3">
+                  <span className="px-2.5 py-1 text-[10px] font-mono rounded-full bg-[#e8621a]/15 text-[#e8621a] border border-[#e8621a]/20 uppercase tracking-wider">
+                    {t.projects.featuredLabel}
+                  </span>
+                  <span className="text-xs text-neutral-600 font-mono">{project.year}</span>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/5 text-neutral-500 border border-white/5">
+                    {project.category}
+                  </span>
+                </div>
+                <h3 className="text-2xl md:text-3xl font-bold text-white">{project.title}</h3>
               </div>
-              <h3 className="text-2xl md:text-3xl font-bold text-white">{project.title}</h3>
+              <div className="md:hidden">
+                <ProjectActions project={project} iconSize={16} />
+              </div>
             </div>
-            {/* Mobile: corner action buttons */}
-            <div className="md:hidden">
-              <ProjectActions project={project} iconSize={16} />
+            <p className="text-neutral-400 leading-relaxed">{project.longDesc ?? project.description}</p>
+            <div className="flex flex-wrap gap-2">
+              {project.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="px-3 py-1 text-xs font-mono rounded-full bg-white/5 text-neutral-400 border border-white/8"
+                >
+                  {tag}
+                </span>
+              ))}
             </div>
+            {project.href && (
+              <div className="flex flex-wrap gap-4 pt-2">
+                <motion.a
+                  href={project.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-sm text-neutral-400 hover:text-white transition-colors"
+                  whileHover={{ x: 4 }}
+                >
+                  <GithubIcon style={{ width: 16, height: 16 }} /> {t.projects.sourceCode}
+                </motion.a>
+              </div>
+            )}
           </div>
-          <p className="text-neutral-400 leading-relaxed">{project.longDesc ?? project.description}</p>
-          <div className="flex flex-wrap gap-2">
-            {project.tags.map((tag) => (
-              <span
-                key={tag}
-                className="px-3 py-1 text-xs font-mono rounded-full bg-white/5 text-neutral-400 border border-white/8"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-          {project.href && (
-            <div className="flex flex-wrap gap-4 pt-2">
-              <motion.a
-                href={project.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-sm text-neutral-400 hover:text-white transition-colors"
-                whileHover={{ x: 4 }}
-              >
-                <GithubIcon style={{ width: 16, height: 16 }} /> {t.projects.sourceCode}
-              </motion.a>
-            </div>
-          )}
-        </div>
 
-        {project.image ? (
-          <ProjectPreview
-            project={project}
-            className="hidden md:block w-52 h-52 rounded-2xl border border-white/10 flex-shrink-0"
-            sizes="208px"
-          />
-        ) : (
-          project.live && (
-            <LiveLinkVisual href={project.live} className="hidden md:flex w-52 h-52" />
-          )
-        )}
+          {project.image ? (
+            <ProjectPreview
+              project={project}
+              className="hidden md:block md:w-[min(480px,46%)] lg:w-[min(520px,48%)] aspect-video rounded-2xl border border-white/10"
+              sizes="(max-width: 1024px) 46vw, 520px"
+            />
+          ) : (
+            project.live && (
+              <LiveLinkVisual href={project.live} className="hidden md:flex w-52 h-52 flex-shrink-0" />
+            )
+          )}
         </div>
       </div>
     </motion.div>

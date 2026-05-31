@@ -119,7 +119,7 @@ function PhotoCard() {
       initial={{ opacity: 0, scale: lite ? 1 : 0.85 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: lite ? 0 : 0.6, duration: lite ? 0.35 : 0.9, ease: EASE }}
-      className="relative w-72 h-96 md:w-80 md:h-[26rem] lg:w-96 lg:h-[30rem]"
+      className="relative w-72 h-96 md:w-80 md:h-[26rem] lg:w-96 lg:h-[30rem] mb-6 lg:mb-0"
     >
       <div
         className={`absolute -inset-4 rounded-3xl bg-[#e8621a]/20 ${lite ? "opacity-60" : "blur-3xl"}`}
@@ -185,7 +185,7 @@ export default function Hero() {
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-[#e8621a]/3 blur-[100px] pointer-events-none" />
       )}
 
-      <div className="flex-1 flex items-center max-w-6xl mx-auto w-full px-6 pt-24 pb-16">
+      <div className="flex-1 flex items-center max-w-6xl mx-auto w-full px-6 pt-24 pb-10 lg:pb-16">
         <div className="w-full flex flex-col lg:flex-row items-center gap-16 lg:gap-20">
           <div className="flex-1 flex flex-col gap-6 lg:max-w-xl">
             <motion.div {...fade(0.2)}>
@@ -264,15 +264,32 @@ export default function Hero() {
             </motion.div>
           </div>
 
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 w-full flex flex-col items-center lg:w-auto">
             <PhotoCard />
+            <motion.button
+              onClick={scrollToAbout}
+              className="lg:hidden mt-12 flex flex-col items-center gap-2 text-neutral-600 hover:text-neutral-400 transition-colors"
+              {...fade(0.7)}
+            >
+              <span className="text-xs font-mono tracking-widest uppercase">{t.hero.scroll}</span>
+              {lite ? (
+                <ArrowDown size={16} />
+              ) : (
+                <motion.div
+                  animate={{ y: [0, 8, 0] }}
+                  transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+                >
+                  <ArrowDown size={16} />
+                </motion.div>
+              )}
+            </motion.button>
           </div>
         </div>
       </div>
 
       <motion.button
         onClick={scrollToAbout}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-neutral-600 hover:text-neutral-400 transition-colors"
+        className="hidden lg:flex absolute bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-2 text-neutral-600 hover:text-neutral-400 transition-colors"
         {...fade(0.7)}
       >
         <span className="text-xs font-mono tracking-widest uppercase">{t.hero.scroll}</span>
