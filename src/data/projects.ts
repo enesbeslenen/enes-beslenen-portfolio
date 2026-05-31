@@ -79,7 +79,7 @@ export const projectsData: Record<Lang, Project[]> = {
     },
     {
       id: 5,
-      title: "Hünkar Sofra",
+      title: "Sofra Lokantası",
       description:
         "Konsept bir lokanta için sıfırdan tasarlanmış, tek sayfalık modern ve animasyonlu tanıtım web sitesi.",
       category: "Landing Page",
@@ -183,7 +183,7 @@ export const projectsData: Record<Lang, Project[]> = {
     },
     {
       id: 5,
-      title: "Hünkar Sofra",
+      title: "Sofra Lokantası",
       description:
         "A single-page modern animated showcase website designed from scratch for a concept restaurant.",
       category: "Landing Page",
