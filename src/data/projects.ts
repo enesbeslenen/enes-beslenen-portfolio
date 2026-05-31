@@ -79,9 +79,9 @@ export const projectsData: Record<Lang, Project[]> = {
     },
     {
       id: 5,
-      title: "Ciğerci — Restoran Sitesi",
+      title: "Hünkar Sofra",
       description:
-        "Geleneksel bir Urfa ciğer restoranı için tasarlanmış, tek sayfalık modern ve animasyonlu tanıtım web sitesi.",
+        "Konsept bir lokanta için sıfırdan tasarlanmış, tek sayfalık modern ve animasyonlu tanıtım web sitesi.",
       category: "Landing Page",
       tags: ["HTML", "CSS", "JavaScript", "Font Awesome"],
       href: "https://github.com/enesbeslenen/cigerci-yusuf",
@@ -183,9 +183,9 @@ export const projectsData: Record<Lang, Project[]> = {
     },
     {
       id: 5,
-      title: "Ciğerci — Restaurant Site",
+      title: "Hünkar Sofra",
       description:
-        "A single-page modern animated showcase website for a traditional Urfa ciğer restaurant, built without frameworks.",
+        "A single-page modern animated showcase website designed from scratch for a concept restaurant.",
       category: "Landing Page",
       tags: ["HTML", "CSS", "JavaScript", "Font Awesome"],
       href: "https://github.com/enesbeslenen/cigerci-yusuf",
