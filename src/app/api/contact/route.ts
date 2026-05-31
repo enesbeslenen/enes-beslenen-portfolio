@@ -1,10 +1,4 @@
 import { NextResponse } from "next/server";
-import {
-  FORMSUBMIT_ENDPOINT,
-  type FormSubmitResponse,
-  isFormSubmitActivationError,
-  isFormSubmitSuccess,
-} from "@/lib/contact";
 
 export async function POST(request: Request) {
   try {
@@ -14,48 +8,45 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
-    const origin =
-      request.headers.get("origin") ??
-      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null);
-
-    const headers: Record<string, string> = {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    };
-    if (origin) {
-      headers.Origin = origin;
-      headers.Referer = `${origin}/`;
+    const accessKey = process.env.WEB3FORMS_ACCESS_KEY;
+    if (!accessKey) {
+      console.error("WEB3FORMS_ACCESS_KEY is not set");
+      return NextResponse.json(
+        { error: "Mail service is not configured." },
+        { status: 503 }
+      );
     }
 
-    const response = await fetch(FORMSUBMIT_ENDPOINT, {
+    const response = await fetch("https://api.web3forms.com/submit", {
       method: "POST",
-      headers,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
       body: JSON.stringify({
+        access_key: accessKey,
         name: name.trim(),
         email: email.trim(),
-        _replyto: email.trim(),
         message: message.trim(),
-        _subject: "Portfolyo İletişim Formu",
-        _template: "table",
-        _captcha: "false",
+        subject: "Portfolyo İletişim Formu",
+        from_name: "Portfolyo — İletişim Formu",
+        replyto: email.trim(),
       }),
     });
 
-    const data = (await response.json()) as FormSubmitResponse;
+    const data = (await response.json()) as { success?: boolean; message?: string };
 
-    if (!isFormSubmitSuccess(data)) {
-      const needsActivation = isFormSubmitActivationError(data.message);
+    if (!response.ok || !data.success) {
+      console.error("Web3Forms error:", data.message ?? response.status);
       return NextResponse.json(
-        {
-          error: data.message ?? "Send failed",
-          needsActivation,
-        },
-        { status: needsActivation ? 403 : 502 }
+        { error: data.message ?? "Send failed" },
+        { status: 502 }
       );
     }
 
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (error) {
+    console.error("Contact API error:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

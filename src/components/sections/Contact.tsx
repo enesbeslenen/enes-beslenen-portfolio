@@ -6,10 +6,7 @@ import { Mail, Send, ArrowRight, CheckCircle2 } from "lucide-react";
 import { GithubIcon, LinkedinIcon, InstagramIcon } from "@/components/ui/SocialIcons";
 import { useLang } from "@/contexts/LanguageContext";
 import {
-  FORMSUBMIT_ENDPOINT,
-  type FormSubmitResponse,
-  isFormSubmitActivationError,
-  isFormSubmitSuccess,
+  type ContactApiResponse,
 } from "@/lib/contact";
 
 const SOCIALS = [
@@ -60,30 +57,23 @@ export default function Contact() {
     setErrorHint(null);
 
     try {
-      const response = await fetch(FORMSUBMIT_ENDPOINT, {
+      const response = await fetch("/api/contact", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: fields.name.trim(),
           email: fields.email.trim(),
-          _replyto: fields.email.trim(),
           message: fields.message.trim(),
-          _subject: "Portfolyo İletişim Formu",
-          _template: "table",
-          _captcha: "false",
         }),
       });
 
-      const data = (await response.json()) as FormSubmitResponse;
+      const data = (await response.json()) as ContactApiResponse;
 
-      if (!isFormSubmitSuccess(data)) {
-        if (isFormSubmitActivationError(data.message)) {
-          setErrorHint(t.contact.sendErrorActivation);
+      if (!response.ok || !data.success) {
+        if (response.status === 503) {
+          setErrorHint(t.contact.sendErrorConfig);
         }
-        throw new Error(data.message ?? "Send failed");
+        throw new Error(data.error ?? "Send failed");
       }
 
       setFormState("success");
