@@ -51,13 +51,13 @@ export const projectsData: Record<Lang, Project[]> = {
     },
     {
       id: 3,
-      title: "Uğur Balık",
+      title: "Deniz Balık",
       description:
         "Bir balık restoranı için sıfırdan tasarlanmış, tamamen responsive ve SEO uyumlu modern tanıtım sitesi. Konsept tasarım.",
       category: "Landing Page",
       tags: ["HTML", "CSS", "JavaScript", "SEO"],
       href: "https://github.com/enesbeslenen/ugur-balikcilik",
-      live: "https://enesbeslenen.github.io/ugur-balikcilik/",
+      live: "https://balikci-restoran-sablonu.vercel.app",
       image: "/projects/ugur-balikcilik.png",
       featured: false,
       gradient: "from-blue-500/15 via-transparent to-transparent",
@@ -155,13 +155,13 @@ export const projectsData: Record<Lang, Project[]> = {
     },
     {
       id: 3,
-      title: "Uğur Balık",
+      title: "Deniz Balık",
       description:
         "A fully responsive, SEO-friendly modern showcase website designed from scratch for a fish restaurant. Concept design.",
       category: "Landing Page",
       tags: ["HTML", "CSS", "JavaScript", "SEO"],
       href: "https://github.com/enesbeslenen/ugur-balikcilik",
-      live: "https://enesbeslenen.github.io/ugur-balikcilik/",
+      live: "https://balikci-restoran-sablonu.vercel.app",
       image: "/projects/ugur-balikcilik.png",
       featured: false,
       gradient: "from-blue-500/15 via-transparent to-transparent",
